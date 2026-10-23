@@ -130,6 +130,7 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--mu
 
   <!-- QUESTION -->
   <section class="card stack" id="quiz" hidden>
+    <p class="hint" id="reuse" hidden></p>
     <div class="progress"><span id="bar" style="width:0%"></span></div>
     <div class="eyebrow" id="qlo"></div>
     <p class="qtext" id="qtext"></p>
@@ -153,7 +154,13 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--mu
         </div>
       </div>
       <div class="lo-bars" id="lobars"></div>
-      <div class="row"><button class="primary" id="again">Take a new mock</button></div>
+      <div class="stack" style="gap:8px">
+        <div class="row">
+          <button class="primary" id="fresh">Fresh paper: unseen questions</button>
+          <button class="ghost" id="again">New random paper</button>
+        </div>
+        <p class="hint" id="seeninfo"></p>
+      </div>
     </div>
     <div class="card stack">
       <h2 id="revh">Questions to review</h2>
@@ -332,9 +339,21 @@ let paper=[],answers=[],cur=0,timer=null,remaining=45*60,timedOut=false;
 
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-function buildPaper(){
+const SEEN_KEY="wsetL1seen";
+let seen=new Set(),reused=0;
+try{seen=new Set(JSON.parse(sessionStorage.getItem(SEEN_KEY)||"[]"));}catch(e){}
+function saveSeen(){try{sessionStorage.setItem(SEEN_KEY,JSON.stringify([...seen]));}catch(e){}}
+function pickFor(pool,n,fresh){
+  if(!fresh)return shuffle(pool).slice(0,n);
+  const unseen=shuffle(pool.filter(b=>!seen.has(b.q))),old=shuffle(pool.filter(b=>seen.has(b.q)));
+  const out=unseen.slice(0,n);
+  if(out.length<n){reused+=n-out.length;out.push(...old.slice(0,n-out.length));}
+  return out;
+}
+function buildPaper(fresh){
+  reused=0;
   let out=[];
-  for(const lo of [1,2,3]) out=out.concat(shuffle(BANK.filter(b=>b.lo===lo)).slice(0,DRAW[lo]));
+  for(const lo of [1,2,3]) out=out.concat(pickFor(BANK.filter(b=>b.lo===lo),DRAW[lo],fresh));
   return shuffle(out).map(b=>{
     const idx=b.keep?b.opts.map((_,i)=>i):shuffle(b.opts.map((_,i)=>i));
     return {...b,opts:idx.map(i=>b.opts[i]),ans:idx.indexOf(b.ans)};
@@ -343,8 +362,11 @@ function buildPaper(){
 
 function fmt(s){const m=Math.floor(s/60),r=s%60;return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");}
 
-function start(){
-  paper=buildPaper();answers=new Array(paper.length).fill(null);cur=0;timedOut=false;remaining=45*60;
+function start(fresh){
+  paper=buildPaper(fresh===true);
+  $("reuse").hidden=!reused;
+  $("reuse").textContent=reused?"Some sections had run out of unseen questions, so "+reused+(reused===1?" question you've seen before is":" questions you've seen before are")+" included.":"";
+  answers=new Array(paper.length).fill(null);cur=0;timedOut=false;remaining=45*60;
   $("start").hidden=true;$("results").hidden=true;$("quiz").hidden=false;$("meta").hidden=false;
   clearInterval(timer);
   const timed=$("timed").checked;$("mtimer").hidden=!timed;
@@ -410,12 +432,19 @@ function finish(){
     li.append(eb,q,you,ok,why);rv.appendChild(li);
   });
   try{const best=Math.max(right,Number(localStorage.getItem("wsetL1best")||0));localStorage.setItem("wsetL1best",best);}catch(e){}
+  paper.forEach(p=>seen.add(p.q));saveSeen();updateSeenInfo();
   showBest();window.scrollTo({top:0});
+}
+function updateSeenInfo(){
+  const left=BANK.filter(b=>!seen.has(b.q)).length;
+  $("seeninfo").textContent=left>0
+    ? "You have answered "+seen.size+" of "+BANK.length+" questions this session. A fresh paper uses only the "+left+" you haven't seen yet."
+    : "You have now seen every question in the bank this session, so fresh papers will start repeating questions.";
 }
 
 function showBest(){try{const b=localStorage.getItem("wsetL1best");$("best").textContent=b?"Your best score so far: "+b+"/30":"";}catch(e){}}
 
-$("go").onclick=start;$("again").onclick=()=>{$("results").hidden=true;$("start").hidden=false;showBest();window.scrollTo({top:0});};
+$("go").onclick=()=>start(false);$("again").onclick=()=>start(false);$("fresh").onclick=()=>start(true);
 $("next").onclick=next;$("prev").onclick=prev;
 document.addEventListener("keydown",e=>{
   if($("quiz").hidden)return;
