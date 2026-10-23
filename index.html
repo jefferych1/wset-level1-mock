@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Free unofficial 30-question practice exam for the WSET Level 1 Award in Wines, with timer, scoring and answer review.">
+<title>Unofficial WSET Level 1 Mock</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a single centred exam card, one question at a time, like a computer-marked paper */
+:root{
+  --bg:#f4f0f1; --surface:#ffffff; --ink:#28191f; --muted:#6c5a61; --line:#e3d8dc;
+  --claret:#7b1e3c; --claret-ink:#ffffff; --claret-soft:#f3e1e7;
+  --good:#23704a; --good-soft:#e2f2e8; --bad:#b0302a; --bad-soft:#f9e3e1;
+  --f-display:"Spectral",Georgia,"Times New Roman",serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#171114; --surface:#211a1d; --ink:#f1e8eb; --muted:#b4a2a9; --line:#3a2e33;
+  --claret:#d46a8c; --claret-ink:#1b1013; --claret-soft:#3b2029;
+  --good:#6fcf98; --good-soft:#1c3226; --bad:#f08a80; --bad-soft:#3d1f1d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171114; --surface:#211a1d; --ink:#f1e8eb; --muted:#b4a2a9; --line:#3a2e33;
+  --claret:#d46a8c; --claret-ink:#1b1013; --claret-soft:#3b2029;
+  --good:#6fcf98; --good-soft:#1c3226; --bad:#f08a80; --bad-soft:#3d1f1d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.25rem;letter-spacing:.01em}
+.brand small{display:block;font-family:var(--f-body);font-weight:500;font-size:.78rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.meta{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;gap:14px}
+.meta b{color:var(--ink);font-weight:500}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px clamp(18px,4vw,34px)}
+h1,h2{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(1.7rem,4.5vw,2.3rem)}
+h2{font-size:1.35rem}
+p{margin:0}
+.lede{color:var(--muted);max-width:60ch}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.facts li{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.facts .n{font-family:var(--f-display);font-size:1.6rem;font-weight:700;color:var(--claret);display:block;line-height:1.1}
+.facts .l{font-size:.8rem;color:var(--muted)}
+.weights{font-size:.88rem;color:var(--muted)}
+.weights table{border-collapse:collapse;width:100%;margin-top:6px;font-variant-numeric:tabular-nums}
+.weights td{padding:6px 0;border-top:1px solid var(--line)}
+.weights td:last-child{text-align:right;font-family:var(--f-mono);color:var(--ink)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border-radius:10px;padding:11px 20px;font-weight:600;border:1px solid transparent}
+button:focus-visible,.opt:focus-visible{outline:3px solid var(--claret);outline-offset:2px}
+.primary{background:var(--claret);color:var(--claret-ink)}
+.primary:disabled{opacity:.4;cursor:not-allowed}
+.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.ghost:disabled{opacity:.4;cursor:not-allowed}
+label.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted)}
+.progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--claret);transition:width .25s}
+.eyebrow{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.qtext{font-family:var(--f-display);font-size:clamp(1.2rem,3.4vw,1.45rem);font-weight:600;line-height:1.35;text-wrap:balance}
+.opts{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.opt{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--surface);color:var(--ink);border:1.5px solid var(--line);border-radius:10px;padding:13px 16px;font-weight:500}
+.opt:hover{border-color:var(--claret)}
+.opt .k{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.opt[aria-checked="true"]{border-color:var(--claret);background:var(--claret-soft)}
+.opt[aria-checked="true"] .k{background:var(--claret);border-color:var(--claret);color:var(--claret-ink)}
+.hint{font-size:.82rem;color:var(--muted)}
+.score{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.big{font-family:var(--f-display);font-weight:700;font-size:clamp(3rem,12vw,4.4rem);line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:.4em;color:var(--muted);font-weight:600}
+.pill{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:.85rem;letter-spacing:.04em;text-transform:uppercase}
+.pill.pass{background:var(--good-soft);color:var(--good)}
+.pill.fail{background:var(--bad-soft);color:var(--bad)}
+.lo-bars{display:flex;flex-direction:column;gap:10px}
+.lo{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:.9rem}
+.lo .bar{grid-column:1/-1;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.lo .bar span{display:block;height:100%;background:var(--claret)}
+.lo .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.review{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.rv{border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.rv .q{font-weight:600}
+.ans{font-size:.92rem;padding:7px 11px;border-radius:8px}
+.ans.you{background:var(--bad-soft);color:var(--bad)}
+.ans.right{background:var(--good-soft);color:var(--good)}
+.ans b{font-weight:700}
+.why{font-size:.9rem;color:var(--muted)}
+.allright{color:var(--good);font-weight:600}
+.timeup{color:var(--bad);font-weight:600}
+@media (max-width:480px){.facts{grid-template-columns:1fr 1fr 1fr}.facts .n{font-size:1.3rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Level 1 Award in Wines<small>Unofficial mock examination</small></div>
+    <div class="meta" id="meta" hidden><span>Q <b id="mq">1</b>/30</span><span id="mtimer">⏱ <b id="mt">45:00</b></span></div>
+  </header>
+
+  <!-- START -->
+  <section class="card stack" id="start">
+    <h1>30 questions, 45 minutes, pass at 70%</h1>
+    <p class="lede">Questions are drawn at random from a bank of 151 questions written against the WSET Level 1 specification, weighted the same way as the real paper. Each attempt gives you a different mix.</p>
+    <ul class="facts">
+      <li><span class="n">30</span><span class="l">multiple-choice</span></li>
+      <li><span class="n">45</span><span class="l">minutes</span></li>
+      <li><span class="n">21</span><span class="l">correct to pass</span></li>
+    </ul>
+    <div class="weights">
+      Weighting by learning outcome
+      <table>
+        <tr><td>LO1 · Grape growing and winemaking</td><td>6</td></tr>
+        <tr><td>LO2 · Types, grapes and styles of wine</td><td>18</td></tr>
+        <tr><td>LO3 · Storage, service and food pairing</td><td>6</td></tr>
+      </table>
+    </div>
+    <div class="row">
+      <button class="primary" id="go">Start exam</button>
+      <label class="chk"><input type="checkbox" id="timed" checked> Timed (45 min)</label>
+    </div>
+    <p class="hint" id="best"></p>
+  </section>
+
+  <!-- QUESTION -->
+  <section class="card stack" id="quiz" hidden>
+    <div class="progress"><span id="bar" style="width:0%"></span></div>
+    <div class="eyebrow" id="qlo"></div>
+    <p class="qtext" id="qtext"></p>
+    <ul class="opts" id="opts" role="radiogroup" aria-labelledby="qtext"></ul>
+    <div class="row" style="justify-content:space-between">
+      <button class="ghost" id="prev">Back</button>
+      <button class="primary" id="next" disabled>Next</button>
+    </div>
+    <p class="hint">Tip: press 1–4 to choose, Enter for next.</p>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="stack" id="results" hidden>
+    <div class="card stack">
+      <p class="timeup" id="timeup" hidden>Time ran out. Unanswered questions were marked wrong.</p>
+      <div class="score">
+        <div class="big" id="score">0<small>/30</small></div>
+        <div class="stack" style="gap:6px">
+          <span class="pill" id="verdict"></span>
+          <span class="hint" id="pct"></span>
+        </div>
+      </div>
+      <div class="lo-bars" id="lobars"></div>
+      <div class="row"><button class="primary" id="again">Take a new mock</button></div>
+    </div>
+    <div class="card stack">
+      <h2 id="revh">Questions to review</h2>
+      <ul class="review" id="review"></ul>
+    </div>
+  </section>
+  <footer class="hint" style="text-align:center">Unofficial practice quiz. Not affiliated with or endorsed by the Wine &amp; Spirit Education Trust (WSET). Questions are original, written against the published Level 1 Award in Wines specification.</footer>
+</div>
+
+<script>
+const LO_NAMES={1:"LO1 · Grape growing and winemaking",2:"LO2 · Types, grapes and styles",3:"LO3 · Storage, service and food"};
+// [lo, topic, question, options, correctIndex, explanation, keepOrder]
+const BANK=[
+// ---------- LO1 ----------
+[1,"Parts of a grape","Which part of the grape contains the colour and tannin?",["Skin","Pulp","Juice","Pips"],0,"Colour and tannin come from the skin. The pulp contains water, sugar and acid."],
+[1,"Parts of a grape","The pulp of a grape contains:",["Water, sugar and acid","Colour and tannin","Alcohol and carbon dioxide","Yeast and sugar"],0,"Pulp = water, sugar and acid. Skin = colour and tannin."],
+[1,"Grape growing","What happens to grapes as they ripen?",["Sugar increases and acid decreases","Sugar decreases and acid increases","Sugar and acid both increase","Sugar and acid both decrease"],0,"During ripening the grapes build up sugar while acidity falls."],
+[1,"Grape growing","In the vine's annual cycle, which stage comes before grape ripening?",["Flowering","Fermentation","Pressing","Bottling"],0,"Flowering comes first; the flowers become grapes, which then ripen. Fermentation, pressing and bottling are winemaking, not grape growing."],
+[1,"Climate","Compared with warm-climate wines, wines from cool climates typically have:",["Higher acidity and lighter body","Lower acidity and fuller body","Higher alcohol and riper fruit","More tannin and black fruit"],0,"Cool climates give less ripe grapes: higher acidity, lower alcohol, lighter body and greener, fresher fruit."],
+[1,"Climate","Wines from warm climates are more likely to show:",["Riper fruit flavours and higher alcohol","Green fruit and very high acidity","Lower alcohol and lighter body","No fruit flavours at all"],0,"Warm climates ripen grapes fully: more sugar (so more alcohol), riper fruit and fuller body."],
+[1,"Fermentation","Which two things are needed for alcoholic fermentation?",["Sugar and yeast","Alcohol and yeast","Sugar and carbon dioxide","Acid and tannin"],0,"Yeast converts sugar into alcohol and carbon dioxide."],
+[1,"Fermentation","Alcoholic fermentation produces:",["Alcohol and carbon dioxide","Sugar and yeast","Acid and tannin","Water and sugar"],0,"The products of fermentation are alcohol and carbon dioxide."],
+[1,"Winemaking","Which is the correct order for making a still white wine?",["Crushing, pressing, fermentation, maturation, bottling","Crushing, fermentation, draining, pressing, maturation, bottling","Pressing, crushing, maturation, fermentation, bottling","Crushing, fermentation, draining, maturation, bottling"],0,"White grapes are crushed and pressed before fermentation, so only the juice is fermented.",true],
+[1,"Winemaking","Which is the correct order for making a still red wine?",["Crushing, fermentation, draining, pressing, maturation, bottling","Crushing, pressing, fermentation, maturation, bottling","Crushing, fermentation, draining, maturation, bottling","Pressing, crushing, fermentation, draining, bottling"],0,"Red wine ferments with the skins; the free-run wine is drained off and the skins are pressed after fermentation. (The third option is the rosé order.)",true],
+[1,"Winemaking","Which is the correct order for making a rosé wine?",["Crushing, fermentation, draining, maturation, bottling","Crushing, pressing, fermentation, maturation, bottling","Crushing, fermentation, draining, pressing, maturation, bottling","Fermentation, crushing, draining, bottling, maturation"],0,"Rosé: black grapes are crushed and ferment with the skins only briefly, then the juice is drained off the skins and fermentation continues.",true],
+[1,"Winemaking","Why are red wines fermented in contact with the grape skins?",["To extract colour and tannin","To add sugar","To increase acidity","To reduce the alcohol"],0,"Colour and tannin are in the skins, so red wines ferment with them."],
+[1,"Winemaking","Rosé wines are usually made from:",["Black grapes with only a short time in contact with the skins","White grapes fermented with their skins","White grapes only","Black grapes fermented with their skins for several weeks"],0,"Rosé uses black grapes, but the juice is drained off the skins early so only a little colour is extracted."],
+[1,"Winemaking","When making a white wine, the grapes are pressed:",["Before fermentation","After fermentation","After maturation","White grapes are never pressed"],0,"White wine: crushing, then pressing, then the juice is fermented."],
+// ---------- LO2 ----------
+[2,"Grape varieties","Which of these grapes is used to make red wine?",["Cabernet Sauvignon","Sauvignon Blanc","Riesling","Chardonnay"],0,"Cabernet Sauvignon is a black grape. The other three are white varieties."],
+[2,"Grape varieties","Which one of these is a white grape variety?",["Riesling","Merlot","Pinot Noir","Syrah"],0,"The principal white grapes are Chardonnay, Sauvignon Blanc, Pinot Grigio and Riesling."],
+[2,"Grape varieties","Which one of these is a black grape variety?",["Merlot","Pinot Grigio","Chardonnay","Sauvignon Blanc"],0,"The principal black grapes are Cabernet Sauvignon, Merlot, Pinot Noir and Syrah/Shiraz."],
+[2,"Wine examples","Which best describes Chablis?",["A dry white wine","A dry red wine","A sweet white wine","A sweet red wine"],0,"Chablis is a dry, unoaked-style white wine from Burgundy, made from Chardonnay."],
+[2,"Wine examples","Chablis is made from which grape?",["Chardonnay","Sauvignon Blanc","Riesling","Pinot Grigio"],0,"Chablis = Chardonnay."],
+[2,"Wine examples","Sancerre is made from which grape?",["Sauvignon Blanc","Chardonnay","Riesling","Pinot Noir"],0,"Sancerre is a dry white from the Loire made from Sauvignon Blanc."],
+[2,"Wine examples","Red Burgundy is made from which grape?",["Pinot Noir","Cabernet Sauvignon","Syrah","Merlot"],0,"Red Burgundy = Pinot Noir. White Burgundy = Chardonnay."],
+[2,"Wine examples","White Burgundy is made from which grape?",["Chardonnay","Sauvignon Blanc","Pinot Grigio","Riesling"],0,"White Burgundy (and Chablis) = Chardonnay."],
+[2,"Wine examples","Red Bordeaux is usually a blend of:",["Cabernet Sauvignon and Merlot","Pinot Noir and Syrah","Merlot and Pinot Noir","Syrah and Cabernet Sauvignon"],0,"Bordeaux reds are blends based mainly on Cabernet Sauvignon and Merlot."],
+[2,"Wine examples","Champagne is:",["A sparkling wine from France","A sparkling wine from Spain","A fortified wine from Portugal","A still white wine from Italy"],0,"Champagne is France's famous sparkling wine. Cava is Spanish; Prosecco is Italian."],
+[2,"Wine examples","Which grapes are mainly used to make Champagne?",["Chardonnay and Pinot Noir","Sauvignon Blanc and Merlot","Riesling and Syrah","Pinot Grigio and Cabernet Sauvignon"],0,"Champagne is made mainly from Chardonnay and Pinot Noir (with Pinot Meunier)."],
+[2,"Other wines","Which country does Cava come from?",["Spain","Italy","France","Portugal"],0,"Cava is a Spanish sparkling wine."],
+[2,"Other wines","Prosecco is:",["A sparkling wine from Italy","A fortified wine from Spain","A red wine from France","A sweet white wine from Bordeaux"],0,"Prosecco is an Italian sparkling wine, usually light and fruity."],
+[2,"Types of wine","Which of these wines is fortified?",["Sherry","Cava","Beaujolais","Prosecco"],0,"Sherry and Port are the fortified examples. Cava and Prosecco are sparkling; Beaujolais is a still red."],
+[2,"Types of wine","Sherry is a fortified wine from:",["Spain","Portugal","Italy","France"],0,"Sherry comes from Spain; Port comes from Portugal."],
+[2,"Other wines","Port is typically:",["A sweet, red, fortified wine","A dry, white, sparkling wine","A dry, red, still wine","A sweet, white, still wine"],0,"Most Port is red, sweet and fortified, from Portugal."],
+[2,"Types of wine","A fortified wine is one that:",["Has had extra alcohol (spirit) added","Has bubbles of carbon dioxide","Has been aged in oak","Is made from both black and white grapes"],0,"Fortified wines have spirit added, which raises their alcohol."],
+[2,"Types of wine","The three types of wine at Level 1 are:",["Still, sparkling and fortified","Red, white and rosé","Dry, medium and sweet","Oaked, unoaked and sparkling"],0,"Types are still, sparkling and fortified. Red, white and rosé are colours."],
+[2,"Types of wine","The bubbles in a sparkling wine are:",["Carbon dioxide","Oxygen","Nitrogen","Alcohol vapour"],0,"Carbon dioxide from fermentation is trapped in the wine to give the bubbles."],
+[2,"Other wines","Sauternes is:",["A sweet white wine","A dry red wine","A sparkling rosé","A fortified red wine"],0,"Sauternes is a famous sweet white wine from Bordeaux."],
+[2,"Other wines","White Zinfandel is best described as:",["A medium-sweet rosé","A dry, full-bodied red","A sweet fortified wine","A dry sparkling white"],0,"White Zinfandel is a pale, medium-sweet, fruity rosé from California."],
+[2,"Other wines","Beaujolais is typically:",["A light-bodied, fruity red with low tannin","A full-bodied red with high tannin","A sweet white wine","A fortified red wine"],0,"Beaujolais is a light, fruity red with red-fruit flavours and low tannin."],
+[2,"Other wines","Rioja comes from which country?",["Spain","Italy","France","Portugal"],0,"Rioja is a Spanish red, often aged in oak (vanilla flavours)."],
+[2,"Other wines","Chianti comes from which country?",["Italy","Spain","France","Australia"],0,"Chianti is an Italian red with high acidity and red-fruit flavours."],
+[2,"Other wines","Côtes du Rhône and Châteauneuf-du-Pape are both:",["Red wines from France","Sparkling wines from Italy","White wines from Spain","Fortified wines from Portugal"],0,"Both are red wines from the Rhône valley in France; Châteauneuf-du-Pape is the fuller, more powerful one."],
+[2,"Grape styles","Which is most typical of Sauvignon Blanc?",["High acidity with green fruit and grassy aromas","Low acidity with vanilla and toast","Full body with black fruit and pepper","Sweet with dried-fruit flavours"],0,"Sauvignon Blanc is usually dry, high in acidity, with green fruit and herbaceous (grassy) aromas, and usually unoaked."],
+[2,"Grape styles","Which statement about Riesling is correct?",["It has high acidity and can be made dry or sweet","It is always a full-bodied oaked wine","It is a black grape used for red wine","It is only used for fortified wines"],0,"Riesling has high acidity and floral, fruity aromas. It is rarely oaked and can range from dry to sweet."],
+[2,"Grape styles","Pinot Grigio wines are typically:",["Light-bodied and dry with delicate fruit flavours","Full-bodied with strong oak flavours","Sweet and fortified","Red with high tannin"],0,"Pinot Grigio is usually light-bodied, dry, with subtle fruit and fresh acidity."],
+[2,"Grape styles","A Chardonnay matured in oak barrels is likely to show:",["Vanilla and toast flavours","Black pepper and blackcurrant","Grassy and herbaceous aromas","Strawberry and raspberry"],0,"Oak gives vanilla, toast and smoky flavours. Chardonnay is often oaked."],
+[2,"Grape styles","Chardonnay from a warm climate is more likely to taste of:",["Tropical fruit such as pineapple","Green apple and lemon","Grass and green pepper","Strawberry and cherry"],0,"Warm climate = riper fruit (tropical). Cool-climate Chardonnay shows green apple and citrus."],
+[2,"Grape styles","Pinot Noir wines are typically:",["Light-bodied with red fruit and low tannin","Full-bodied with black fruit and high tannin","Sweet and fortified","White with high acidity"],0,"Pinot Noir: light to medium body, low tannin, red fruit (strawberry, raspberry, cherry)."],
+[2,"Grape styles","Which is most typical of Cabernet Sauvignon?",["Black fruit such as blackcurrant and high tannin","Red fruit and low tannin","Green fruit and grassy aromas","Tropical fruit and low acidity"],0,"Cabernet Sauvignon has thick skins: deep colour, high tannin, high acidity and blackcurrant flavours, often with oak."],
+[2,"Grape styles","Compared with Cabernet Sauvignon, Merlot wines are usually:",["Softer, with lower tannin and plum flavours","More acidic, with green fruit flavours","Lighter in colour, with strawberry flavours","Sweeter, with dried fruit flavours"],0,"Merlot is typically softer and rounder: medium tannin, red and black plum flavours."],
+[2,"Grape styles","Which flavours are typical of Syrah/Shiraz?",["Black fruit and black pepper","Green apple and lemon","Strawberry and raspberry","Peach and honey"],0,"Syrah/Shiraz: full-bodied with black fruit and black pepper (spice)."],
+[2,"Characteristics","Tannin in red wine creates a sensation in the mouth that is:",["Drying and slightly bitter","Sweet and fruity","Mouth-watering","Warming in the throat"],0,"Tannin dries the mouth. Acidity makes the mouth water; alcohol gives warmth."],
+[2,"Characteristics","Which characteristic makes your mouth water?",["Acidity","Tannin","Sweetness","Body"],0,"Acidity makes the mouth water and wines taste fresh."],
+[2,"Characteristics","The 'body' of a wine describes:",["How heavy or full the wine feels in the mouth","How sweet the wine tastes","The colour of the wine","How long the wine was aged"],0,"Body is the weight or fullness of the wine, from light to full."],
+[2,"Characteristics","Sweetness in wine comes from:",["Sugar left in the wine after fermentation","Tannin from the skins","Carbon dioxide","Oak barrels"],0,"Any grape sugar not turned into alcohol remains as sweetness."],
+[2,"Characteristics","Which of these aromas usually comes from oak?",["Vanilla","Lemon","Blackcurrant","Grass"],0,"Oak gives vanilla, toast, smoke and sweet spice. The others are fruit or herbaceous aromas."],
+// ---------- LO3 ----------
+[3,"Storage","Wine is best stored somewhere bright, ideally in sunlight.",["True","False"],1,"Wine should be stored away from light, which can damage it.",true],
+[3,"Storage","Ideal conditions for storing wine include:",["A cool, constant temperature away from light","A warm room near a radiator","A brightly lit shelf","A place where the temperature changes daily"],0,"Store wine somewhere cool, at a steady temperature, away from strong light."],
+[3,"Storage","Bottles sealed with a cork should be stored:",["Lying on their side","Standing upright","Upside down","Neck tilted upwards"],0,"Lying the bottle down keeps the cork moist so it doesn't dry out and let air in."],
+[3,"Preserving wine","How does a vacuum system help preserve an opened bottle of wine?",["It removes air from the bottle","It adds more alcohol","It chills the wine","It adds carbon dioxide bubbles"],0,"A vacuum pump removes air (oxygen) from the bottle, slowing deterioration."],
+[3,"Preserving wine","A blanket system preserves opened wine by:",["Covering the wine with a protective layer of gas","Wrapping the bottle in a cloth","Freezing the wine","Removing the sugar"],0,"An inert gas is put into the bottle to form a 'blanket' over the wine, keeping oxygen away."],
+[3,"Service temperature","What is the recommended service temperature for sparkling wine?",["Well chilled","Lightly chilled","Room temperature","Warm"],0,"Sparkling and sweet wines: well chilled."],
+[3,"Service temperature","What is the recommended service temperature for a sweet wine such as Sauternes?",["Well chilled","Room temperature","Lightly chilled","Warm"],0,"Sweet wines are served well chilled."],
+[3,"Service temperature","A light-bodied white wine such as Pinot Grigio should be served:",["Chilled","Room temperature","Warm","Lightly chilled"],0,"Light- and medium-bodied whites and rosés: chilled."],
+[3,"Service temperature","A full-bodied white wine, such as an oaked Chardonnay, should be served:",["Lightly chilled","Well chilled","Room temperature","Warm"],0,"Full-bodied whites: lightly chilled, so the flavours aren't muted."],
+[3,"Service temperature","A light-bodied red such as Beaujolais can be served:",["Lightly chilled","Well chilled","Warm","Frozen"],0,"Light-bodied reds: lightly chilled."],
+[3,"Service temperature","A full-bodied red such as red Bordeaux should be served at:",["Room temperature","Well chilled","Chilled","Lightly chilled"],0,"Medium- and full-bodied reds: room temperature. Chilling makes the tannins taste harsher."],
+[3,"Opening wine","When opening a bottle of sparkling wine you should:",["Hold the cork and turn the bottle, pointing it away from people","Pull the cork out quickly so it pops","Shake the bottle first","Use a corkscrew"],0,"Keep a hand on the cork, twist the bottle (not the cork), angle it away from people and ease the cork out gently."],
+[3,"Serving wine","Before serving a wine, you should check its appearance and smell in order to:",["Make sure the wine is not faulty","Decide on the price","Measure the alcohol","Check the vintage"],0,"A quick check of appearance and nose shows whether the wine is faulty (for example a musty, cork-tainted smell)."],
+[3,"Serving wine","Wine glasses should be:",["Clean and free of any smells such as detergent","Warmed before use","Rinsed in soap and left wet","Chilled in the freezer"],0,"Dirty or detergent-smelling glasses spoil the aromas of the wine."],
+[3,"Food and wine","Umami in food makes a wine taste sweeter and fruitier.",["True","False"],1,"Umami (and sweetness) in food make wine seem drier, more acidic and bitter, and less fruity.",true],
+[3,"Food and wine","Sweetness in food makes a wine taste:",["More bitter and acidic, and less fruity","Sweeter and fruitier","Less acidic","Smoother and less bitter"],0,"Sweet food makes wine seem drier, more acidic and bitter, and less fruity. Choose a wine at least as sweet as the food."],
+[3,"Food and wine","Salt in food tends to make a wine taste:",["Less bitter and less acidic","More bitter and more acidic","Much sweeter","More alcoholic"],0,"Salt reduces the perception of bitterness and acidity, so wines feel smoother."],
+[3,"Food and wine","Acidity in food makes a wine taste:",["Less acidic, and fruitier and sweeter","More acidic and more bitter","Less fruity","More alcoholic"],0,"Acidic food makes wine seem less acidic, and sweeter and fruitier. High-acid wines suit acidic food."],
+[3,"Food and wine","Chilli heat in food increases the:",["Burning effect of alcohol","Sweetness of the wine","Fruitiness of the wine","Body of the wine"],0,"Chilli heat increases the burn from alcohol (and bitterness). Lower-alcohol, fruity wines work better."],
+[3,"Food and wine","When matching flavour intensity of food and wine, you should:",["Match them so neither overpowers the other","Always choose the strongest wine","Always choose the lightest wine","Ignore flavour intensity"],0,"Delicate food suits delicate wine; intensely flavoured food needs a wine with matching intensity."],
+// ---------- LO1 (added) ----------
+[1,"Parts of a grape","Where in the grape is the sugar that yeast turns into alcohol?",["In the pulp","In the skin","In the stalk","In the pips"],0,"Sugar, water and acid are all in the pulp."],
+[1,"Parts of a grape","Most of the acid in a grape is found in the:",["Pulp","Skin","Stalk","Pips"],0,"The pulp holds the water, sugar and acid."],
+[1,"Parts of a grape","Why is it possible to make a white wine from black grapes?",["The pulp of most black grapes is colourless","Black grapes contain no tannin","Yeast removes the colour","The skins turn white during fermentation"],0,"Colour comes from the skin. If black grapes are pressed before fermentation, the juice stays almost colourless."],
+[1,"Grape growing","After flowering, the next key stage in the vine's annual cycle is:",["Grape ripening","Pressing","Fermentation","Maturation"],0,"Flowering, then grape ripening. Pressing, fermentation and maturation happen in the winery."],
+[1,"Grape growing","As black grapes ripen, their skins change colour from:",["Green to red/black","Black to green","Red to white","They do not change colour"],0,"All grapes start green; black grapes change colour during ripening."],
+[1,"Grape growing","Grapes left to ripen for longer usually have:",["More sugar and less acid","Less sugar and more acid","Less sugar and less acid","More acid and more sugar"],0,"Ripening raises sugar and lowers acid."],
+[1,"Climate","A white wine with high acidity, light body and green apple flavours most likely comes from:",["A cool climate","A warm climate"],0,"High acidity, light body and green fruit are typical of cool-climate grapes.",true],
+[1,"Climate","Why do wines from warm climates often have higher alcohol?",["Riper grapes have more sugar for the yeast to turn into alcohol","Warm weather adds alcohol to the grapes","Spirit is always added","The skins contain alcohol"],0,"More sugar in riper grapes means more alcohol after fermentation."],
+[1,"Climate","Tropical fruit flavours such as pineapple and mango in a white wine suggest the grapes were grown in:",["A warm climate","A cool climate"],0,"Riper, tropical fruit flavours come from grapes grown in warmer climates.",true],
+[1,"Fermentation","During fermentation, what turns the sugar into alcohol?",["Yeast","Oak","Tannin","Acid"],0,"Yeast feeds on sugar and produces alcohol and carbon dioxide."],
+[1,"Fermentation","If fermentation stops before all the sugar has been converted, the wine will be:",["Sweet","Sparkling","Red","Higher in tannin"],0,"Sugar that is not converted into alcohol stays in the wine as sweetness."],
+[1,"Fermentation","When making a still wine, the carbon dioxide from fermentation is:",["Allowed to escape into the air","Turned into alcohol","Kept in the bottle as bubbles","Turned into tannin"],0,"For still wines the gas escapes. It is only trapped when making sparkling wine."],
+[1,"Winemaking","In red winemaking, 'draining' means:",["Running the wine off the skins after fermentation","Removing water from the grapes","Emptying the bottles","Removing the yeast before fermentation"],0,"After fermentation the free-run wine is drained off the skins, which are then pressed."],
+[1,"Winemaking","Which stage comes immediately after maturation?",["Bottling","Crushing","Pressing","Fermentation"],0,"The final stages for all three colours are maturation, then bottling."],
+[1,"Winemaking","Maturation is the stage when the wine is:",["Stored for a period, in tanks or oak, before bottling","Turned from grapes into juice","Fermented with yeast","Picked from the vine"],0,"Maturation is storing the finished wine before bottling. Oak maturation adds flavours such as vanilla and toast."],
+// ---------- LO2 (added) ----------
+[2,"Grape varieties","Which grape variety is also called Shiraz?",["Syrah","Merlot","Pinot Noir","Cabernet Sauvignon"],0,"Syrah and Shiraz are the same black grape. 'Shiraz' is the name used in Australia."],
+[2,"Grape varieties","Which of these is NOT a black grape variety?",["Pinot Grigio","Pinot Noir","Merlot","Syrah"],0,"Pinot Grigio is a white grape variety."],
+[2,"Grape varieties","Which group contains only white grape varieties?",["Chardonnay, Riesling, Pinot Grigio","Chardonnay, Merlot, Riesling","Sauvignon Blanc, Syrah, Riesling","Pinot Noir, Pinot Grigio, Chardonnay"],0,"White: Chardonnay, Sauvignon Blanc, Pinot Grigio, Riesling."],
+[2,"Grape varieties","Which grape is known for thick skins that give deep colour and high tannin?",["Cabernet Sauvignon","Pinot Noir","Pinot Grigio","Riesling"],0,"Cabernet Sauvignon's thick skins give deep colour and high tannin."],
+[2,"Grape styles","A pale red wine with strawberry and raspberry flavours and low tannin is most likely made from:",["Pinot Noir","Cabernet Sauvignon","Syrah","Merlot"],0,"Pinot Noir is pale, light-bodied, low in tannin and tastes of red fruit."],
+[2,"Grape styles","A full-bodied red with blackberry and black pepper flavours is most likely:",["Shiraz","Pinot Noir","Riesling","Pinot Grigio"],0,"Black fruit and black pepper are the hallmarks of Syrah/Shiraz."],
+[2,"Grape styles","A dry white with high acidity and grassy, herbaceous aromas is most likely:",["Sauvignon Blanc","Oaked Chardonnay","Merlot","Syrah"],0,"Sauvignon Blanc is known for grassy, green aromas and high acidity."],
+[2,"Grape styles","Which white grape is most often matured in oak?",["Chardonnay","Sauvignon Blanc","Riesling","Pinot Grigio"],0,"Chardonnay is frequently oaked. Sauvignon Blanc, Riesling and Pinot Grigio are usually unoaked."],
+[2,"Grape styles","Why is Riesling rarely matured in new oak?",["Oak would mask its delicate floral and fruit aromas","It has no acidity","It is a black grape","Oak would make it fortified"],0,"Riesling is prized for its fresh floral and fruit aromas, which oak would cover up."],
+[2,"Grape styles","Which aromas are typical of Riesling?",["Floral, citrus and stone fruit","Vanilla and toast","Black pepper and blackcurrant","Plum and chocolate"],0,"Riesling is aromatic: flowers, citrus and stone fruit such as peach."],
+[2,"Grape styles","Pinot Grigio is especially associated with which country?",["Italy","Australia","Spain","Portugal"],0,"Pinot Grigio is the Italian name for this grape, and Italy is its best-known source."],
+[2,"Grape styles","Merlot wines typically have:",["Medium tannin and plum flavours","Very high tannin and green flavours","No tannin and citrus flavours","High sweetness"],0,"Merlot is soft and round, with medium tannin and plum and red-black fruit."],
+[2,"Grape styles","An Australian Shiraz is typically:",["Full-bodied with ripe black fruit","Light-bodied with red fruit","A dry white with citrus","Sweet and sparkling"],0,"Warm-climate Shiraz is full-bodied with ripe black fruit and spice."],
+[2,"Wine examples","Which of these wines is made from Sauvignon Blanc?",["Sancerre","Chablis","Red Bordeaux","Red Burgundy"],0,"Sancerre = Sauvignon Blanc."],
+[2,"Wine examples","Which of these wines is made from Pinot Noir?",["Red Burgundy","Sancerre","Chablis","Sauternes"],0,"Red Burgundy = Pinot Noir."],
+[2,"Wine examples","Which of these wines comes from Bordeaux?",["Sauternes","Chablis","Sancerre","Chianti"],0,"Sauternes is a sweet white wine from the Bordeaux region."],
+[2,"Wine examples","Chablis and white Burgundy are both made from:",["Chardonnay","Sauvignon Blanc","Pinot Grigio","Riesling"],0,"Both are Chardonnay from Burgundy; Chablis is in the north of the region."],
+[2,"Wine examples","Sancerre is typically:",["A dry white with high acidity","A sweet white","A full-bodied red","A sparkling rosé"],0,"Sancerre is a crisp, dry Sauvignon Blanc from the Loire."],
+[2,"Wine examples","Red Bordeaux is typically:",["Medium- to full-bodied with black fruit and noticeable tannin","Light-bodied with very low tannin","A sweet fortified red","A dry white"],0,"Cabernet Sauvignon and Merlot give Bordeaux black fruit, structure and tannin."],
+[2,"Wine examples","Which French region makes a famous red from Pinot Noir and a famous white from Chardonnay?",["Burgundy","Bordeaux","Loire","Rhône"],0,"Burgundy: red from Pinot Noir, white from Chardonnay."],
+[2,"Other wines","Which of these is a sparkling wine from Spain?",["Cava","Prosecco","Rioja","Sherry"],0,"Cava is Spanish sparkling wine. Rioja is a Spanish red; Sherry is Spanish fortified wine."],
+[2,"Other wines","Which of these is a red wine from Italy?",["Chianti","Rioja","Beaujolais","Sancerre"],0,"Chianti comes from Tuscany in Italy."],
+[2,"Other wines","Which Spanish red is often matured in oak, giving it vanilla flavours?",["Rioja","Chianti","Beaujolais","Côtes du Rhône"],0,"Rioja is known for oak maturation, which gives vanilla notes."],
+[2,"Other wines","Which of these is usually the lightest-bodied red?",["Beaujolais","Châteauneuf-du-Pape","Red Bordeaux","Australian Shiraz"],0,"Beaujolais is light, fruity and low in tannin."],
+[2,"Other wines","Châteauneuf-du-Pape is best described as:",["A full-bodied red from the Rhône","A light red from Beaujolais","A sweet white from Bordeaux","A sparkling wine from Italy"],0,"Châteauneuf-du-Pape is a powerful, full-bodied red from the southern Rhône."],
+[2,"Other wines","Which of these wines is sweet?",["Sauternes","Chablis","Sancerre","Chianti"],0,"Sauternes is sweet. Chablis and Sancerre are dry whites; Chianti is a dry red."],
+[2,"Other wines","Which country does Port come from?",["Portugal","Spain","France","Italy"],0,"Port comes from Portugal; Sherry comes from Spain."],
+[2,"Other wines","Which of these wines is a rosé?",["White Zinfandel","Sauternes","Prosecco","Chablis"],0,"Despite its name, White Zinfandel is a pink, medium-sweet rosé."],
+[2,"Other wines","Which country does White Zinfandel come from?",["USA","Spain","France","Australia"],0,"White Zinfandel comes from California, USA."],
+[2,"Other wines","A sweet, full-bodied white with honey and dried-fruit flavours is most likely:",["Sauternes","Sancerre","Chablis","Pinot Grigio"],0,"Sauternes is rich, sweet and full-bodied, with honey and dried fruit."],
+[2,"Types of wine","Which of these is a still wine?",["Rioja","Champagne","Cava","Prosecco"],0,"Rioja is still. Champagne, Cava and Prosecco are sparkling."],
+[2,"Types of wine","Which pair are both sparkling wines?",["Champagne and Prosecco","Port and Sherry","Rioja and Chianti","Sauternes and Chablis"],0,"Port and Sherry are fortified; Rioja and Chianti are reds; Sauternes and Chablis are still whites."],
+[2,"Types of wine","Compared with most still wines, fortified wines usually have:",["Higher alcohol","Lower alcohol","No alcohol","More bubbles"],0,"Adding spirit raises the alcohol of fortified wines."],
+[2,"Types of wine","Port and Sherry are both examples of:",["Fortified wines","Sparkling wines","Rosé wines","Light-bodied whites"],0,"Port and Sherry are the two fortified wines in the Level 1 syllabus."],
+[2,"Characteristics","Which characteristic is found mainly in red wines rather than whites?",["Tannin","Acidity","Alcohol","Fruit flavours"],0,"Tannin comes from the skins, so it is mainly in red wines, which ferment with their skins."],
+[2,"Characteristics","Alcohol in wine is felt as:",["A warming sensation in the mouth and throat","A drying feeling on the gums","A mouth-watering sensation","A sweet taste on the tip of the tongue"],0,"Alcohol warms; tannin dries; acidity makes the mouth water."],
+[2,"Characteristics","A wine with no noticeable sweetness is described as:",["Dry","Sweet","Medium","Fortified"],0,"Dry means no detectable sweetness."],
+[2,"Characteristics","Which of these is a fruit aroma?",["Blackcurrant","Vanilla","Toast","Smoke"],0,"Vanilla, toast and smoke come from oak; blackcurrant is a fruit aroma."],
+[2,"Characteristics","At Level 1, the colour of a wine is described as:",["White, rosé or red","Still, sparkling or fortified","Dry, medium or sweet","Light, medium or full"],0,"Colours: white, rosé, red. The other options are types, sweetness and body."],
+[2,"Characteristics","A full-bodied wine feels:",["Rich and heavy in the mouth","Thin and watery","Very sweet","Very sparkling"],0,"Body is the weight of the wine in the mouth."],
+[2,"Characteristics","Higher alcohol usually makes a wine feel:",["Fuller-bodied","Lighter-bodied","More acidic","Less warming"],0,"Alcohol adds weight, so higher-alcohol wines tend to feel fuller."],
+[2,"Characteristics","A red wine that leaves your gums feeling dry has noticeable:",["Tannin","Sweetness","Acidity","Carbon dioxide"],0,"That drying, grippy feeling is tannin."],
+// ---------- LO3 (added) ----------
+[3,"Storage","Why should wine not be stored near a heat source such as an oven or radiator?",["Heat can damage the wine and make it age too quickly","Heat makes the wine sweeter","Heat adds bubbles","Heat has no effect on wine"],0,"Warm or fluctuating temperatures damage wine. Store it somewhere cool and steady."],
+[3,"Storage","Why don't bottles with screwcaps need to be stored on their side?",["There is no cork that could dry out","Screwcaps leak when lying down","Screwcap wines must be kept in sunlight","They must be stored upside down"],0,"Lying bottles down keeps corks moist. Screwcaps don't dry out, so they can stand upright."],
+[3,"Storage","Strong light, especially sunlight, can:",["Damage the wine","Improve the flavour","Make the wine sparkle","Increase the alcohol"],0,"Light can spoil wine, so store it in the dark."],
+[3,"Storage","The best place to store wine at home is:",["A cool, dark place with a steady temperature","On top of the fridge","On a sunny windowsill","Next to the oven"],0,"Cool, dark and constant: avoid heat, light and temperature swings."],
+[3,"Preserving wine","Once a bottle of wine has been opened, its main enemy is:",["Air (oxygen)","Darkness","Cold","The cork"],0,"Oxygen makes opened wine lose its fresh fruit. Vacuum and blanket systems keep air away."],
+[3,"Preserving wine","Which of these helps keep an opened bottle of still wine fresh?",["Removing the air with a vacuum pump","Leaving the bottle open","Keeping it in a warm room","Shaking the bottle"],0,"A vacuum system removes air from the bottle."],
+[3,"Service temperature","A light-bodied rosé should be served:",["Chilled","Room temperature","Warm","Lightly chilled"],0,"Light- and medium-bodied whites and rosés: chilled."],
+[3,"Service temperature","Champagne should be served:",["Well chilled","Room temperature","Lightly chilled","Warm"],0,"All sparkling wines: well chilled."],
+[3,"Service temperature","A Châteauneuf-du-Pape should be served at:",["Room temperature","Well chilled","Chilled","Lightly chilled"],0,"It is a full-bodied red: room temperature."],
+[3,"Service temperature","A Sancerre should be served:",["Chilled","Room temperature","Warm","Lightly chilled"],0,"Sancerre is a light- to medium-bodied white: chilled."],
+[3,"Service temperature","Serving a full-bodied red wine too cold makes it taste:",["Harsher, with more noticeable tannin and less fruit","Sweeter","More alcoholic","Fizzy"],0,"Cold emphasises tannin and mutes fruit, which is why full reds are served at room temperature."],
+[3,"Service temperature","Which of these wines should be served the coldest?",["Prosecco","Red Bordeaux","Oaked Chardonnay","Rioja"],0,"Sparkling wines such as Prosecco are served well chilled."],
+[3,"Opening wine","When opening a still wine with a corkscrew, the first step is to:",["Cut and remove the top of the foil capsule","Shake the bottle","Warm the bottle neck","Push the cork into the bottle"],0,"Remove the top of the capsule, wipe the neck, then draw the cork."],
+[3,"Opening wine","When opening sparkling wine, the cork should come out:",["Gently, with a quiet hiss rather than a loud pop","As loudly as possible","Pointing towards a guest","Using a corkscrew"],0,"Control the cork so it releases gently; a loud pop wastes wine and can be dangerous."],
+[3,"Serving wine","A musty, damp-cardboard smell in a wine is a sign that:",["The wine is faulty (cork taint)","The wine has aged perfectly","The wine has been oaked","The wine is sparkling"],0,"This is the classic smell of cork taint, a fault. Checking the nose before serving catches it."],
+[3,"Food and wine","Which wine would best match a sweet dessert?",["A wine at least as sweet as the dessert, such as Sauternes","A very dry, high-tannin red","A dry white such as Chablis","A dry sparkling wine"],0,"Sweet food makes dry wines taste sour and thin; choose a wine at least as sweet as the food."],
+[3,"Food and wine","Which food component makes a high-tannin red taste more bitter and harsh?",["Umami, as in mushrooms","Salt","Acidity","Fatty richness"],0,"Umami (like sweetness) increases bitterness and acidity in wine."],
+[3,"Food and wine","For a hot, spicy chilli dish, which wine is generally the safest choice?",["A low-alcohol, off-dry, fruity white","A high-alcohol, high-tannin red","A fortified wine","A full-bodied oaked white"],0,"Chilli increases alcohol burn and bitterness; lower alcohol and a little sweetness help."],
+[3,"Food and wine","Rich, fatty food is often paired with a wine that has high acidity because:",["The acidity cuts through the richness and refreshes the palate","Acidity makes the food sweeter","High acidity hides all flavour","Acidity adds alcohol"],0,"High-acid wines feel refreshing with fatty or oily dishes."],
+[3,"Food and wine","Delicately flavoured food, such as steamed white fish, is best with:",["A light, delicate wine","A full-bodied, high-alcohol red","A sweet fortified wine","Any very powerful wine"],0,"Match flavour intensity: a powerful wine would overwhelm delicate food."],
+[3,"Food and wine","Adding a squeeze of lemon to a dish makes a high-acid wine such as Sauvignon Blanc taste:",["Less acidic and fruitier","Much more acidic","More bitter","More alcoholic"],0,"Acidity in food makes wine seem less acidic, and fruitier and sweeter."]
+].map(([lo,topic,q,opts,ans,why,keep])=>({lo,topic,q,opts,ans,why,keep:!!keep}));
+
+const DRAW={1:6,2:18,3:6};
+const $=id=>document.getElementById(id);
+let paper=[],answers=[],cur=0,timer=null,remaining=45*60,timedOut=false;
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function buildPaper(){
+  let out=[];
+  for(const lo of [1,2,3]) out=out.concat(shuffle(BANK.filter(b=>b.lo===lo)).slice(0,DRAW[lo]));
+  return shuffle(out).map(b=>{
+    const idx=b.keep?b.opts.map((_,i)=>i):shuffle(b.opts.map((_,i)=>i));
+    return {...b,opts:idx.map(i=>b.opts[i]),ans:idx.indexOf(b.ans)};
+  });
+}
+
+function fmt(s){const m=Math.floor(s/60),r=s%60;return String(m).padStart(2,"0")+":"+String(r).padStart(2,"0");}
+
+function start(){
+  paper=buildPaper();answers=new Array(paper.length).fill(null);cur=0;timedOut=false;remaining=45*60;
+  $("start").hidden=true;$("results").hidden=true;$("quiz").hidden=false;$("meta").hidden=false;
+  clearInterval(timer);
+  const timed=$("timed").checked;$("mtimer").hidden=!timed;
+  if(timed){$("mt").textContent=fmt(remaining);
+    timer=setInterval(()=>{remaining--;$("mt").textContent=fmt(Math.max(remaining,0));if(remaining<=0){timedOut=true;finish();}},1000);}
+  render();window.scrollTo({top:0});
+}
+
+function render(){
+  const p=paper[cur];
+  $("mq").textContent=cur+1;
+  $("bar").style.width=((cur)/paper.length*100)+"%";
+  $("qlo").textContent=LO_NAMES[p.lo]+" · "+p.topic;
+  $("qtext").textContent=p.q;
+  const ul=$("opts");ul.innerHTML="";
+  p.opts.forEach((o,i)=>{
+    const li=document.createElement("li");
+    const b=document.createElement("button");
+    b.className="opt";b.type="button";b.setAttribute("role","radio");
+    b.setAttribute("aria-checked",answers[cur]===i?"true":"false");
+    b.innerHTML='<span class="k">'+"abcd"[i]+'</span><span></span>';
+    b.lastChild.textContent=o;
+    b.onclick=()=>{answers[cur]=i;render();};
+    li.appendChild(b);ul.appendChild(li);
+  });
+  $("prev").disabled=cur===0;
+  $("next").disabled=answers[cur]===null;
+  $("next").textContent=cur===paper.length-1?"Finish and mark":"Next";
+}
+
+function next(){if(answers[cur]===null)return;if(cur<paper.length-1){cur++;render();}else finish();}
+function prev(){if(cur>0){cur--;render();}}
+
+function finish(){
+  clearInterval(timer);
+  $("quiz").hidden=true;$("meta").hidden=true;$("results").hidden=false;
+  const right=paper.filter((p,i)=>answers[i]===p.ans).length;
+  const pass=right>=21;
+  $("score").innerHTML=right+"<small>/30</small>";
+  const v=$("verdict");v.textContent=pass?"Pass":"Fail";v.className="pill "+(pass?"pass":"fail");
+  $("pct").textContent=Math.round(right/30*100)+"% · pass mark 70% (21/30)";
+  $("timeup").hidden=!timedOut;
+  const lb=$("lobars");lb.innerHTML="";
+  for(const lo of [1,2,3]){
+    const qs=paper.map((p,i)=>[p,i]).filter(([p])=>p.lo===lo);
+    const ok=qs.filter(([p,i])=>answers[i]===p.ans).length;
+    const d=document.createElement("div");d.className="lo";
+    d.innerHTML='<span></span><span class="v">'+ok+"/"+qs.length+'</span><div class="bar"><span style="width:'+(ok/qs.length*100)+'%"></span></div>';
+    d.firstChild.textContent=LO_NAMES[lo];lb.appendChild(d);
+  }
+  const wrong=paper.map((p,i)=>[p,i]).filter(([p,i])=>answers[i]!==p.ans);
+  $("revh").textContent=wrong.length?"Questions to review ("+wrong.length+")":"Questions to review";
+  const rv=$("review");rv.innerHTML="";
+  if(!wrong.length){const li=document.createElement("li");li.className="allright";li.textContent="Full marks. Nothing to review.";rv.appendChild(li);}
+  wrong.forEach(([p,i])=>{
+    const li=document.createElement("li");li.className="rv";
+    const mk=(cls,html)=>{const e=document.createElement("div");e.className=cls;e.innerHTML=html;return e;};
+    const eb=mk("eyebrow","");eb.textContent="Q"+(i+1)+" · "+LO_NAMES[p.lo]+" · "+p.topic;
+    const q=mk("q","");q.textContent=p.q;
+    const you=mk("ans you","<b>Your answer:</b> ");you.append(answers[i]===null?"(not answered)":p.opts[answers[i]]);
+    const ok=mk("ans right","<b>Correct answer:</b> ");ok.append(p.opts[p.ans]);
+    const why=mk("why","");why.textContent=p.why;
+    li.append(eb,q,you,ok,why);rv.appendChild(li);
+  });
+  try{const best=Math.max(right,Number(localStorage.getItem("wsetL1best")||0));localStorage.setItem("wsetL1best",best);}catch(e){}
+  showBest();window.scrollTo({top:0});
+}
+
+function showBest(){try{const b=localStorage.getItem("wsetL1best");$("best").textContent=b?"Your best score so far: "+b+"/30":"";}catch(e){}}
+
+$("go").onclick=start;$("again").onclick=()=>{$("results").hidden=true;$("start").hidden=false;showBest();window.scrollTo({top:0});};
+$("next").onclick=next;$("prev").onclick=prev;
+document.addEventListener("keydown",e=>{
+  if($("quiz").hidden)return;
+  const n=parseInt(e.key,10);
+  if(n>=1&&n<=paper[cur].opts.length){answers[cur]=n-1;render();}
+  else if(e.key==="Enter"&&!e.target.closest(".opt")){next();}
+});
+showBest();
+</script>
+
+</body>
+</html>
